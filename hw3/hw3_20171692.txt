@@ -1,0 +1,11 @@
+
+TINY COMPILATION: test.c
+
+Building Symbol Table...
+
+Symbol table:
+
+
+Checking Types...
+
+Type Checking Finished
