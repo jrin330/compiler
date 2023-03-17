@@ -49,13 +49,14 @@ extern int lineno; /* source line number for listing */
 /**************************************************/
 
 typedef enum {StmtK,ExpK} NodeKind;
-typedef enum {CompoundK,IfK,IterK,RetK,CallK} StmtKind;
+typedef enum {CompoundK,IfK,CallK,IterK,RetK} StmtKind;
 typedef enum {VarK,VarArrayK,FuncK,AssignK,OpK,ConstK,IdK} ExpKind;
 
 /* ExpType is used for type checking */
 typedef enum {Void,Integer} ExpType;
 
 #define MAXCHILDREN 3
+struct ScopeSpecListRec;
 
 typedef struct treeNode
    { struct treeNode * child[MAXCHILDREN];
@@ -65,7 +66,8 @@ typedef struct treeNode
      union { StmtKind stmt; ExpKind exp;} kind;
      union { TokenType op;
              int val;
-             char * name; } attr;
+             char * name; 
+             struct ScopeSpecListRec *scope; } attr;
      int isParam;
      int arraySize;
      ExpType type; /* for type checking of exps */

@@ -55,6 +55,7 @@ typedef struct ScopeSpecListRec
  * first time, otherwise ignored
  */
 void st_insert( char *, int , int , TreeNode *);
+void lineno_insert(char *, int);
 
 /* Function st_lookup returns the memory
  * location of a variable or -1 if not found
@@ -67,6 +68,7 @@ BucketList st_lookup_top(char *);
 
 void scope_insert(char *name);
 ScopeList scope_top(void);
+void scope_push(ScopeList );
 void scope_pop(void);
 void scope_init(void);
 

@@ -1,9 +1,62 @@
 
-TINY COMPILATION: test.c
+TINY COMPILATION: SORT.CM
 
 Building Symbol Table...
 
 Symbol table:
+
+Function name: Global init (nested level : 0)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
+main           13            Function          Void           32
+sort           12            Function          Void           19  40
+minloc         11            Function          Integer         3  24
+x              10            Variable          IntegerArray    2  36  40
+
+Function name: minloc (nested level : 1)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
+low            2             Parameter         Integer         3   5   6   7
+a              1             Parameter         IntegerArray    3   6   9  10
+i              4             Variable          Integer         4   7   8   9  10  11  13  13
+k              6             Variable          Integer         4   5  11  16
+x              5             Variable          Integer         4   6   9  10
+high           3             Parameter         Integer         3   8
+
+Function name: minloc (nested level : 2)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
+
+Function name: minloc (nested level : 3)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
+
+Function name: sort (nested level : 1)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
+low            2             Parameter         Integer        19  21
+a              1             Parameter         IntegerArray   19  24  25  26  26  27
+i              4             Variable          Integer        20  21  22  24  26  27  28  28
+k              5             Variable          Integer        20  24  25  26
+high           3             Parameter         Integer        19  22  24
+
+Function name: sort (nested level : 2)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
+t              6             Variable          Integer        23  25  27
+
+Function name: main (nested level : 1)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
+i              1             Variable          Integer        33  34  35  36  36  37  37  41  42  43  43
+
+Function name: main (nested level : 2)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
+
+Function name: main (nested level : 2)
+Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers
+----------- -----------   ---------------   --------------- ----------------
 
 
 Checking Types...

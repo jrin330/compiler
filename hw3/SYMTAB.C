@@ -28,14 +28,14 @@ static int hash(char *key)
 
 // For print Symbol table
 static ScopeList allScope[SIZE];
-static int allScope_top=0;
+static int allScope_top = 0;
 
 // For current Symbol table with nested level
 static ScopeList scopeStack[SIZE];
-static int scopeStack_top=-1;
+static int scopeStack_top = -1;
 
 static int memlocStack[SIZE];
-static int memloc_top=-1;
+static int memloc_top = -1;
 
 static char *funcname;
 
@@ -48,33 +48,43 @@ void st_insert(char *name, int lineno, int loc, TreeNode *node)
 {
   int h = hash(name);
   ScopeList s = scopeStack[scopeStack_top];
-  BucketList l = s->table[h];
-  while ((l != NULL) && (strcmp(name, l->name) != 0))
-    l = l->next;
-  if (l == NULL) /* variable not yet in table */
-  {
-    printf("new st\n");
-    l = (BucketList)malloc(sizeof(struct BucketListRec));
-    l->name = name;
-    l->lines = (LineList)malloc(sizeof(struct LineListRec));
-    l->lines->lineno = lineno;
-    l->memloc = loc;
-    l->lines->next = NULL;
-    l->next = s->table[h];
-    s->table[h] = l;
-    l->node = node;
-  }
-  else /* found in table, so just add line number */
-  {
-    printf("exist st\n");
-    LineList t = l->lines;
-    while (t->next != NULL)
-      t = t->next;
-    t->next = (LineList)malloc(sizeof(struct LineListRec));
-    t->next->lineno = lineno;
-    t->next->next = NULL;
-  }
+  BucketList l;
+  // first insert
+  s = scopeStack[scopeStack_top];
+  l = (BucketList)malloc(sizeof(struct BucketListRec));
+  l->name = name;
+  l->lines = (LineList)malloc(sizeof(struct LineListRec));
+  l->lines->lineno = lineno;
+  l->memloc = loc;
+  l->lines->next = NULL;
+  l->next = s->table[h];
+  s->table[h] = l;
+  l->node = node;
 } /* st_insert */
+
+void lineno_insert(char *name, int lineno){
+  int h = hash(name);
+  ScopeList s = scopeStack[scopeStack_top];
+  BucketList l;
+ 
+  while (s != NULL)
+  {
+    l = s->table[h];
+    while ((l != NULL) && (strcmp(name, l->name) != 0))
+      l = l->next;
+    if (l != NULL) // exist
+    {
+      LineList t = l->lines;
+      while (t->next != NULL)
+        t = t->next;
+      t->next = (LineList)malloc(sizeof(struct LineListRec));
+      t->next->lineno = lineno;
+      t->next->next = NULL;
+      return;
+    }
+    s = s->parent;
+  }
+}
 
 /* Function st_lookup returns the memory
  * location of a variable or -1 if not found
@@ -84,11 +94,9 @@ void st_insert(char *name, int lineno, int loc, TreeNode *node)
  */
 BucketList st_lookup(char *name)
 {
-  printf("%s\n",name);
   int h = hash(name);
   ScopeList s = scopeStack[scopeStack_top];
   BucketList l = NULL;
-
   while (s != NULL)
   {
     l = s->table[h];
@@ -142,6 +150,11 @@ void scope_init(void)
   memlocStack[++memloc_top] = 0;
 }
 
+void scope_push(ScopeList s)
+{
+  scopeStack[++scopeStack_top] = s;
+}
+
 void scope_pop(void)
 {
   scopeStack_top--;
@@ -159,8 +172,9 @@ int add_memloc(int size)
   return memlocStack[memloc_top];
 }
 
-void copy_memloc(void){
-  memlocStack[memloc_top] = memlocStack[memloc_top-1];
+void copy_memloc(void)
+{
+  memlocStack[memloc_top] = memlocStack[memloc_top - 1];
 }
 /* Procedure printSymTab prints a formatted
  * listing of the symbol table contents
@@ -180,42 +194,44 @@ void printSymTab_cur(FILE *listing, BucketList cur[])
       while (l != NULL)
       {
         fprintf(listing, "%-14s ", tmp->name);
-        fprintf(listing, "%-8d  ", tmp->memloc);
+        fprintf(listing, "%-12d  ", tmp->memloc);
         char *s;
-        switch(node->kind.exp){
-          case VarK:
-          case VarArrayK:
-            if(node->isParam)
-              s = "Parameter";
-            else
-              s = "Variable";
-            break;
-          case FuncK:
-            s = "Function";
-            break;
-          default:
-            break;
+        switch (node->kind.exp)
+        {
+        case VarK:
+        case VarArrayK:
+          if (node->isParam)
+            s = "Parameter";
+          else
+            s = "Variable";
+          break;
+        case FuncK:
+          s = "Function";
+          break;
+        default:
+          break;
         }
-        fprintf(listing, "%-10s",s);
+        fprintf(listing, "%-18s", s);
 
-        switch(node->type){
-          case Void:
-            s = "Void";
-            break;
-          case Integer:
-            if(node->kind.exp == VarArrayK)
-              s = "IntegerArray";
-            else
-              s = "Integer";
-            break;
-          default:
-            break;
+        switch (node->type)
+        {
+        case Void:
+          s = "Void";
+          break;
+        case Integer:
+          if (node->kind.exp == VarArrayK)
+            s = "IntegerArray";
+          else
+            s = "Integer";
+          break;
+        default:
+          break;
         }
-        fprintf(listing,"%-15s", s);
+        fprintf(listing, "%-13s", s);
 
         while (l != NULL)
         {
-          fprintf(listing, "%4d ", l->lineno);
+          fprintf(listing, "%4d", l->lineno);
           l = l->next;
         }
         fprintf(listing, "\n");
@@ -231,9 +247,9 @@ void printSymTab(FILE *listing)
   {
     cur_s = allScope[i];
     fprintf(listing, "Function name: %s (nested level : %d)\n", cur_s->name, cur_s->level);
-	  fprintf(listing, "Symbol Name   Symbol Type      Data Type       Line Numbers\n");
-	  fprintf(listing, "-----------   -----------   ---------------   ---------------\n");
+    fprintf(listing, "Symbol Name   Mem loc       Symbol Type      Data Type       Line Numbers\n");
+    fprintf(listing, "----------- -----------   ---------------   --------------- ----------------\n");
     printSymTab_cur(listing, cur_s->table);
-    fprintf(listing,"\n");
+    fprintf(listing, "\n");
   }
 } /* printSymTab */

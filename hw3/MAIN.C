@@ -60,8 +60,8 @@ int main( int argc, char * argv[] )
   { fprintf(stderr,"File %s not found\n",pgm);
     exit(1);
   }
-  listing = stdout;
-  //listing = fopen("hw3_20171692.txt","w");
+  //listing = stdout;
+  listing = fopen("hw3_20171692.txt","w");
   fprintf(listing,"\nTINY COMPILATION: %s\n",pgm);
 #if NO_PARSE
   fprintf(listing,"line number\t\ttoken\t\tlexeme\n");
